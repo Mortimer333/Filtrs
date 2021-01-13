@@ -44,11 +44,11 @@ Create SQL `where` queries programmatically.
   
 # How to use
  
-If you need to create very simple filters from user input (in string format) this library is what you need. It's in it's 0.0.1 version so very simple queries. 
+If you need to create very simple filters from user input (in string format) this library is what you need. It's in its 0.0.1 version so very VERY simple queries. 
 
 ## Columns
 
-To filter by columns just pass columns name as key and assign :
+To filter by columns just pass column name as key and assign :
   - g_con - global connector
   - l_con - not required if you are using only one value, local connector
   - operator - available: >, <, >=, <=, =, !=, IS NOT, IS, LIKE
