@@ -1,13 +1,28 @@
 <?php
-/**
-  *
-  */
 class Filtrs
 {
 
   private string $filtr = '';
+  private array $attrs  = [];
 
   function __construct(array $filtrs)
+  {
+    $this->attrs = $filtrs;
+    $this->filtr = $this->create( $filtrs );
+  }
+
+  public function get()
+  {
+    return $this->filtr;
+  }
+
+  public function add( array $attrs )
+  {
+    $this->attrs = array_merge( $this->attrs, $attrs );
+    $this->filtr = $this->create( $this->attrs );
+  }
+
+  private function create( array $filtrs )
   {
     $filtr_str = "";
     $end_filtrs = [];
@@ -18,9 +33,9 @@ class Filtrs
 
       switch ( strtoupper( $column ) ) {
         case 'ORDER BY':
-          $end_filtrs[ strtoupper( $column ) ] = $attr;
-          break;
         case "GROUP BY":
+        case "LIMIT":
+        case "OFFSET":
           $end_filtrs[ strtoupper( $column ) ] = $attr;
           break;
         default:
@@ -29,15 +44,21 @@ class Filtrs
 
     }
 
-    if (isset($end_filtrs['GROUP BY'])) $filtr_str = $this->AddGroup($filtr_str, $end_filtrs['GROUP BY']);
-    if (isset($end_filtrs['ORDER BY'])) $filtr_str = $this->AddOrder($filtr_str, $end_filtrs['ORDER BY']);
+    if ( isset($end_filtrs['GROUP BY']) ) $filtr_str = $this->AddGroup ($filtr_str, $end_filtrs['GROUP BY']);
+    if ( isset($end_filtrs['ORDER BY']) ) $filtr_str = $this->AddOrder ($filtr_str, $end_filtrs['ORDER BY']);
+    if ( isset($end_filtrs['LIMIT'   ]) ) $filtr_str = $this->AddLiOf  ($filtr_str, $end_filtrs['LIMIT'   ], "LIMIT" );
+    if ( isset($end_filtrs['OFFSET'  ]) ) $filtr_str = $this->AddLiOf  ($filtr_str, $end_filtrs['OFFSET'  ], "OFFSET");
 
-    $this->filtr = $filtr_str;
+    return $filtr_str;
   }
 
-  public function get()
+  private function AddLiOf( string $filtr_str, int $value , string $type )
   {
-    return $this->filtr;
+    /*
+      "limit" => int
+    */
+    $filtr_str .= " " . $type . " " . $value;
+    return $filtr_str;
   }
 
   private function AddOrder(string $filtr_str, array $attr)
